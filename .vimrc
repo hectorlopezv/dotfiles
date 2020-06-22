@@ -1,18 +1,12 @@
-[ -n "$PS1" ] && source ~/.bash_profile;
-export FZF_DEFAULT_COMMAND='rg --files --follow --hidden'
-export LD_PRELOAD="/home/vagrant/stderred/build/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
-#Fish syntax
-# set -gx FZF_DEFAULT_COMMAND  'rg --files --follow --hidden'
-vagrant@ubuntu-eoan:~$ cd .vim
-vagrant@ubuntu-eoan:~/.vim$ cd ..
-vagrant@ubuntu-eoan:~$ cat .vomrc
-cat: .vomrc: No such file or directory
-vagrant@ubuntu-eoan:~$ cat .vimrc
-"Use the Solarized Dark themS
-"
-set background=dark
-colorscheme PaperColor
-let g:solarized_termtrans=1
+
+"Enable folding
+
+set foldmethod=indent
+set foldlevel=99
+
+"Enable folding with the spacebar
+nnoremap <space> za
+
 
 " Make Vim more useful
 set nocompatible
@@ -38,7 +32,7 @@ set noeol
 set backupdir=~/.vim/backups
 set directory=~/.vim/swaps
 if exists("&undodir")
-        set undodir=~/.vim/undo
+	set undodir=~/.vim/undo
 endif
 
 " Don’t create backups when editing files in certain directories
@@ -91,19 +85,19 @@ set title
 set showcmd
 " Use relative line numbers
 if exists("&relativenumber")
-        set relativenumber
-        au BufReadPost * set relativenumber
+	set relativenumber
+	au BufReadPost * set relativenumber
 endif
 " Start scrolling three lines before the horizontal window border
 set scrolloff=3
 
 " Strip trailing whitespace (,ss)
 function! StripWhitespace()
-        let save_cursor = getpos(".")
-        let old_query = getreg('/')
-        :%s/\s\+$//e
-        call setpos('.', save_cursor)
-        call setreg('/', old_query)
+	let save_cursor = getpos(".")
+	let old_query = getreg('/')
+	:%s/\s\+$//e
+	call setpos('.', save_cursor)
+	call setreg('/', old_query)
 endfunction
 noremap <leader>ss :call StripWhitespace()<CR>
 " Save a file as root (,W)
@@ -111,29 +105,33 @@ noremap <leader>W :w !sudo tee % > /dev/null<CR>
 
 " Automatic commands
 if has("autocmd")
-        " Enable file type detection
-        filetype on
-        " Treat .json files as .js
-        autocmd BufNewFile,BufRead *.json setfiletype json syntax=javascript
-        " Treat .md files as Markdown
-        autocmd BufNewFile,BufRead *.md setlocal filetype=markdown
-    " Trim white spaces on c and python
-        autocmd BufWritePre *.c,*.py :%s/\s\+$//e
-        "Fix indent on C and Python
-        autocmd BufWritePre *.c,*.py :normal gg=G
-        "Trim blank lines in the end of file
-        autocmd BufWritePre *.c,*.py $put _ | $;?\(^\s*$\)\@!?+2,$d
+	" Enable file type detection
+	filetype on
+	" Treat .json files as .js
+	autocmd BufNewFile,BufRead *.json setfiletype json syntax=javascript
+	" Treat .md files as Markdown
+	autocmd BufNewFile,BufRead *.md setlocal filetype=markdown
+	" Trim white spaces on c and python
+	autocmd BufWritePre *.c,*.py :%s/\s\+$//e
+	"Fix indent on C and Python
+	autocmd BufWritePre *.c,*.py :normal gg=G
+	"Trim blank lines in the end of file
+	autocmd BufWritePre *.c,*.py $put _ | $;?\(^\s*$\)\@!?+2,$d
+
+
 endif
 
 " Commands for splitting windows
 set splitbelow
 set splitright
-"HORIZONTAL SPLIT"
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-"VERTICAL SPLIT"
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+"vertical split
+nnoremap <leader>v :split<enter>
+"horizontal split
+nnoremap <leader>o :vsplit<enter>
+"opening table
+nnoremap <C-Insert> :tabnew<CR>
+nnoremap <C-D> :tabclose<CR>
+
 "SEARCH FOR FILE"
 nnoremap <C-p> :Files<CR>
 
@@ -142,12 +140,11 @@ nnoremap <C-p> :Files<CR>
 nnoremap <C-Left> :tabprevious<CR>
 nnoremap <C-Right> :tabnext<CR>
 
-"travel between windows
-nmap <silent> <A-Up> :wincmd k<CR>
-nmap <silent> <A-Down> :wincmd j<CR>
-nmap <silent> <A-Left> :wincmd h<CR>
-nmap <silent> <A-Right> :wincmd l<CR>
-
+"move beetween split panes
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
 "ale jump between lintin error"
 nmap <silent> . <Plug>(ale_previous_wrap)
 nmap <silent> - <Plug>(ale_next_wrap)'
@@ -156,36 +153,36 @@ nmap <silent> - <Plug>(ale_next_wrap)'
 let g:ale_fixers= {'javascript' : ['eslint']}
 
 " Fix files automatically on save"
- let g:ale_fix_on_save = 1
+let g:ale_fix_on_save = 1
 nmap <F6> <Plug>(ale_fix)
 " Fix files automatically on save"
 
 
 "tags search
-vmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+"vmap <leader>f  <Plug>(coc-format-selected)
+"nmap <leader>f  <Plug>(coc-format-selected)
 
 "FZF
 nnoremap <Leader>b :Buffers<CR>
 nnoremap <Leader>h :History<CR>
 " Mapping selecting mappings
 nmap <leader><tab> <plug>(fzf-maps-n)
- xmap <leader><tab> <plug>(fzf-maps-x)
- omap <leader><tab> <plug>(fzf-maps-o)
+xmap <leader><tab> <plug>(fzf-maps-x)
+omap <leader><tab> <plug>(fzf-maps-o)
 "
 " " Insert mode completion
- imap <c-x><c-k> <plug>(fzf-complete-word)
- imap <c-x><c-f> <plug>(fzf-complete-path)
- imap <c-x><c-j> <plug>(fzf-complete-file-ag)
- imap <c-x><c-l> <plug>(fzf-complete-line)
+imap <c-x><c-k> <plug>(fzf-complete-wod)
+imap <c-x><c-f> <plug>(fzf-complete-path)
+imap <c-x><c-j> <plug>(fzf-complete-file-ag)
+imap <c-x><c-l> <plug>(fzf-complete-line)
 "
 
 " Vertical linex
 let g:indentLine_enabled = 1
 if empty(glob('~/.vim/autoload/plug.vim'))
- silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 
@@ -199,4 +196,45 @@ Plug 'junegunn/fzf.vim'
 Plug 'dense-analysis/ale'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'https://github.com/WolfgangMehner/c-support.git'
+
+"los del video
+Plug 'scrooloose/nerdtree'
+Plug 'morhetz/gruvbox'
+Plug 'easymotion/vim-easymotion'
 call plug#end()
+nmap <leader>s <Plug>(easymotion-s2)
+nmap <leader>n :NERDTreeFind<CR>
+let NERDTreeQuitOnOpen=1
+colorscheme gruvbox
+
+let g:gruvbox_contrast_dark = "hard"
+:set bg=dark
+
+function! s:check_back_space() abort
+	let col = col('.') - 1
+	return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+inoremap <silent><expr> <Tab>
+			\ pumvisible() ? "\<C-n>" :
+			\ <SID>check_back_space() ? "\<Tab>" :
+			\ coc#refresh()
+
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+"e K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+	if (index(['vim','help'], &filetype) >= 0)
+		execute 'h '.expand('<cword>')
+	else
+		call CocAction('doHover')
+	endif
+endfunction
+
+" Highlight the symbol and its references when holding
+" the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+autocmd FileType python map <buffer> <F9> :w<CR>:exec '!python' shellescape(@%, 1)<CR>
+
